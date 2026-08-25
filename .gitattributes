@@ -1,1 +1,5 @@
-docker/pipeline.pkl filter=lfs diff=lfs merge=lfs -text
+# Datos y artefactos binarios necesarios para reproducibilidad e inferencia.
+weatherAUS_2026C1.csv filter=lfs diff=lfs merge=lfs -text
+artifacts/*.keras filter=lfs diff=lfs merge=lfs -text
+artifacts/*.joblib filter=lfs diff=lfs merge=lfs -text
+artifacts/*.npz filter=lfs diff=lfs merge=lfs -text

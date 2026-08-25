@@ -1,0 +1,74 @@
+{
+  "date_partition_rule": "six_contiguous_equal_unique_date_blocks",
+  "decision_impact": "none",
+  "development_index_hash": "c88ccabb5035ee1caa4d7a93792a741061327127a8456621c0e492fe1531b04b",
+  "development_rows": 113722,
+  "elapsed_seconds": 158.25048732757568,
+  "final_test_features_used": 0,
+  "final_test_predictions_computed": 0,
+  "final_test_rows_reserved": 28431,
+  "fold_count": 5,
+  "frozen_artifact_sha256_after": {
+    "model": "041251e4eec0cdb5031edaa39a150664424fb5e6cef85156c2cd02a5bd92e077",
+    "preprocessor": "4bca0f30cfe1d3bde21c0e4da62044d8c3f3a6c19b220d2407c44df3820069ac",
+    "selection": "7c03609f8f206d38f1e474886efa98034c499fcf78cf308f980a178efd6e0a2d"
+  },
+  "frozen_artifact_sha256_before": {
+    "model": "041251e4eec0cdb5031edaa39a150664424fb5e6cef85156c2cd02a5bd92e077",
+    "preprocessor": "4bca0f30cfe1d3bde21c0e4da62044d8c3f3a6c19b220d2407c44df3820069ac",
+    "selection": "7c03609f8f206d38f1e474886efa98034c499fcf78cf308f980a178efd6e0a2d"
+  },
+  "frozen_artifacts_unchanged": true,
+  "initial_training_rows_not_scored": 7942,
+  "models_compared": 1,
+  "primary_oof_metrics_reference": {
+    "f1_positive": 0.6591894998331541,
+    "pr_auc": 0.7214264713644563,
+    "precision": 0.6250527351989875,
+    "recall": 0.6972703741469919,
+    "roc_auc": 0.8819232920040554
+  },
+  "protocol": "expanding_window_temporal_robustness",
+  "random_state": 42,
+  "role": "secondary_analysis_only",
+  "temporal_evaluation_rows": 105780,
+  "temporal_macro_mean": {
+    "f1_positive": 0.6394890523800408,
+    "pr_auc": 0.7075354283516667,
+    "precision": 0.6117771306565036,
+    "recall": 0.6703666365075833,
+    "roc_auc": 0.8706960547269065
+  },
+  "temporal_macro_std": {
+    "f1_positive": 0.013291031515821549,
+    "pr_auc": 0.017481744550819085,
+    "precision": 0.014588286682826966,
+    "recall": 0.024147406240957302,
+    "roc_auc": 0.00904124990269519
+  },
+  "temporal_pooled_metrics": {
+    "f1_positive": 0.639778079348607,
+    "pr_auc": 0.6964140828047002,
+    "precision": 0.6111640675639608,
+    "recall": 0.6712030484485574,
+    "roc_auc": 0.86398532852256
+  },
+  "temporal_worst_fold": {
+    "f1_positive": 0.6233218258534714,
+    "pr_auc": 0.6904187366514674,
+    "precision": 0.591662115419625,
+    "recall": 0.6500900090009001,
+    "roc_auc": 0.8550544638885469
+  },
+  "threshold": 0.5957959890365601,
+  "threshold_optimized_temporally": false,
+  "threshold_source": "priority_3_oof_selection",
+  "winner_candidate_id": "nn_config_5",
+  "winner_parameters": {
+    "batch_size": 128,
+    "dropout_rate": 0.4,
+    "epochs": 50,
+    "learning_rate": 0.0005
+  },
+  "winner_source": "C:/Users/zahir/Documents/Codex/Proyecto_clima_original/AA1-TUIA-Dimenna-Jacob-Taborda/artifacts/oof_selection.json"
+}

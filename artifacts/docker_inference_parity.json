@@ -1,0 +1,22 @@
+{
+  "atol": 1e-07,
+  "candidate_id": "nn_config_5",
+  "container_parity_status": "verified",
+  "frozen_artifact_sha256": {
+    "model": "041251e4eec0cdb5031edaa39a150664424fb5e6cef85156c2cd02a5bd92e077",
+    "preprocessor": "4bca0f30cfe1d3bde21c0e4da62044d8c3f3a6c19b220d2407c44df3820069ac",
+    "selection": "7c03609f8f206d38f1e474886efa98034c499fcf78cf308f980a178efd6e0a2d"
+  },
+  "image": "prediccion-lluvia:parity",
+  "image_id": "sha256:022f0457d351380f99679f684eeae52a593a65104050398f107333819ae8cddc",
+  "labels_match": true,
+  "max_absolute_probability_delta": 8.772735593520764e-08,
+  "mean_absolute_probability_delta": 1.8706512214870487e-08,
+  "probabilities_match": true,
+  "protocol": "docker_end_to_end_inference_parity",
+  "rtol": 1e-06,
+  "sample_index_sha256": "a024667fb9e77aa662efe1dc3abb1ce233321decce0337dcb48f3ae7d369c2e7",
+  "sample_rows": 512,
+  "sample_test_overlap": 0,
+  "threshold": 0.5957959890365601
+}

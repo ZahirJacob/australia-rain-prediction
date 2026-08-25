@@ -1,0 +1,13 @@
+**
+
+!docker/
+!docker/Dockerfile
+!docker/requirements.txt
+!docker/inferencia.py
+
+!weather_preprocessing.py
+
+!artifacts/
+!artifacts/oof_selection.json
+!artifacts/selected_nn_preprocessor.joblib
+!artifacts/selected_nn_model.keras

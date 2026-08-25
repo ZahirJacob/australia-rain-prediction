@@ -1,0 +1,25 @@
+{
+  "atol": 1e-07,
+  "candidate_id": "nn_config_5",
+  "container_parity_status": "pending_docker_runtime",
+  "frozen_artifact_sha256": {
+    "model": "041251e4eec0cdb5031edaa39a150664424fb5e6cef85156c2cd02a5bd92e077",
+    "preprocessor": "4bca0f30cfe1d3bde21c0e4da62044d8c3f3a6c19b220d2407c44df3820069ac",
+    "selection": "7c03609f8f206d38f1e474886efa98034c499fcf78cf308f980a178efd6e0a2d"
+  },
+  "labels_match": true,
+  "max_absolute_probability_delta": 2.9747009300251648e-08,
+  "mean_absolute_probability_delta": 4.830631518823122e-09,
+  "probabilities_match": true,
+  "probability_semantics": "P(RainTomorrow=Yes)",
+  "protocol": "local_inference_parity",
+  "rtol": 1e-06,
+  "sample_index_sha256": "a024667fb9e77aa662efe1dc3abb1ce233321decce0337dcb48f3ae7d369c2e7",
+  "sample_rows": 512,
+  "sample_source": "random_primary_development_only",
+  "sample_test_overlap": 0,
+  "subprocess_stderr": "2026-08-25 20:30:43.326660: I tensorflow/core/util/port.cc:113] oneDNN custom operations are on. You may see slightly different numerical results due to floating-point round-off errors from different computation orders. To turn them off, set the environment variable `TF_ENABLE_ONEDNN_OPTS=0`.\n2026-08-25 20:30:44.049534: I tensorflow/core/util/port.cc:113] oneDNN custom operations are on. You may see slightly different numerical results due to floating-point round-off errors from different computation orders. To turn them off, set the environment variable `TF_ENABLE_ONEDNN_OPTS=0`.\n2026-08-25 20:30:46,342 INFO weather_inference: Entrada cargada: 512 filas\n2026-08-25 20:30:46.399591: I tensorflow/core/platform/cpu_feature_guard.cc:210] This TensorFlow binary is optimized to use available CPU instructions in performance-critical operations.\nTo enable the following instructions: AVX2 FMA, in other operations, rebuild TensorFlow with the appropriate compiler flags.\n2026-08-25 20:30:46,785 INFO weather_inference: Salida guardada: C:\\Users\\zahir\\AppData\\Local\\Temp\\weather_local_parity_2y2n7mbe\\output.csv; modelo=nn_config_5 threshold=0.595795989037",
+  "subprocess_stdout": "",
+  "threshold": 0.5957959890365601,
+  "threshold_labels_match": true
+}

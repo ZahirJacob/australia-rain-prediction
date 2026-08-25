@@ -1,0 +1,41 @@
+{
+  "candidate_count": 23,
+  "complementary_metrics": [
+    "precision",
+    "recall",
+    "pr_auc",
+    "roc_auc"
+  ],
+  "development_index_hash": "c88ccabb5035ee1caa4d7a93792a741061327127a8456621c0e492fe1531b04b",
+  "development_rows": 113722,
+  "elapsed_seconds": 2364.001863002777,
+  "final_test_features_used": 0,
+  "final_test_predictions_computed": 0,
+  "final_test_rows_reserved": 28431,
+  "frozen_model_artifact": "artifacts/selected_nn_model.keras",
+  "frozen_model_format": "keras_plus_joblib_preprocessor",
+  "frozen_preprocessor_artifact": "artifacts/selected_nn_preprocessor.joblib",
+  "primary_metric": "f1_positive",
+  "protocol": "single_stratified_5fold_oof",
+  "random_state": 42,
+  "selection_bias_note": "OOF se usa para seleccionar y reportar; test final confirma despues.",
+  "tie_break": "threshold_closest_to_0.5_then_candidate_id",
+  "winner": {
+    "candidate_id": "nn_config_5",
+    "family": "NeuralNetwork",
+    "oof_metrics": {
+      "f1_positive": 0.6591894998331541,
+      "pr_auc": 0.7214264713644563,
+      "precision": 0.6250527351989875,
+      "recall": 0.6972703741469919,
+      "roc_auc": 0.8819232920040554
+    },
+    "parameters": {
+      "batch_size": 128,
+      "dropout_rate": 0.4,
+      "epochs": 50,
+      "learning_rate": 0.0005
+    },
+    "threshold": 0.5957959890365601
+  }
+}
