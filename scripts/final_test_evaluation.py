@@ -9,6 +9,7 @@ from __future__ import annotations
 import argparse
 import hashlib
 import json
+import sys
 from datetime import datetime, timezone
 from pathlib import Path
 
@@ -26,6 +27,11 @@ from sklearn.metrics import (
 from sklearn.model_selection import train_test_split
 from tensorflow import keras
 
+
+ROOT = Path(__file__).resolve().parents[1]
+SRC_DIR = ROOT / "src"
+if str(SRC_DIR) not in sys.path:
+    sys.path.insert(0, str(SRC_DIR))
 
 RANDOM_STATE = 42
 FINAL_TEST_SIZE = 0.20
@@ -74,8 +80,8 @@ def run(args):
 
     frozen_paths = {
         "selection": selection_path,
-        "model": Path(selection["frozen_model_artifact"]).resolve(),
-        "preprocessor": Path(selection["frozen_preprocessor_artifact"]).resolve(),
+        "model": ROOT / selection["frozen_model_artifact"],
+        "preprocessor": ROOT / selection["frozen_preprocessor_artifact"],
     }
     frozen_hashes_before = {
         name: sha256_file(path) for name, path in frozen_paths.items()
@@ -245,16 +251,18 @@ def run(args):
 
 def parse_args():
     parser = argparse.ArgumentParser()
-    parser.add_argument("--dataset", type=Path, default=Path("weatherAUS_2026C1.csv"))
     parser.add_argument(
-        "--selection", type=Path, default=Path("artifacts/oof_selection.json")
+        "--dataset", type=Path, default=ROOT / "data" / "weatherAUS_2026C1.csv"
+    )
+    parser.add_argument(
+        "--selection", type=Path, default=ROOT / "artifacts" / "oof_selection.json"
     )
     parser.add_argument(
         "--temporal-summary",
         type=Path,
-        default=Path("artifacts/temporal_robustness.json"),
+        default=ROOT / "artifacts" / "temporal_robustness.json",
     )
-    parser.add_argument("--output-dir", type=Path, default=Path("artifacts"))
+    parser.add_argument("--output-dir", type=Path, default=ROOT / "artifacts")
     return parser.parse_args()
 
 

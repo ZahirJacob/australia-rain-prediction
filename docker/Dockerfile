@@ -15,10 +15,9 @@ COPY docker/requirements.txt /tmp/requirements.txt
 RUN python -m pip install --no-cache-dir --upgrade pip \
     && python -m pip install --no-cache-dir -r /tmp/requirements.txt
 
-# El contexto de build es la raiz del repositorio. Solo se incorporan los
-# componentes del bundle final validado; los artefactos PyCaret quedan fuera.
+# El contexto de build es la raiz del repositorio.
 COPY docker/inferencia.py /app/docker/inferencia.py
-COPY weather_preprocessing.py /app/weather_preprocessing.py
+COPY src/weather_preprocessing.py /app/src/weather_preprocessing.py
 COPY artifacts/oof_selection.json /app/artifacts/oof_selection.json
 COPY artifacts/selected_nn_preprocessor.joblib /app/artifacts/selected_nn_preprocessor.joblib
 COPY artifacts/selected_nn_model.keras /app/artifacts/selected_nn_model.keras

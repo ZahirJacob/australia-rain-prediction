@@ -8,7 +8,7 @@
     "selection": "7c03609f8f206d38f1e474886efa98034c499fcf78cf308f980a178efd6e0a2d"
   },
   "image": "prediccion-lluvia:parity",
-  "image_id": "sha256:022f0457d351380f99679f684eeae52a593a65104050398f107333819ae8cddc",
+  "image_id": "sha256:0d0c66af26b143ad16a780d55b82e575df7eb6c74cad8c875af3ae80dcb9afda",
   "labels_match": true,
   "max_absolute_probability_delta": 8.772735593520764e-08,
   "mean_absolute_probability_delta": 1.8706512214870487e-08,

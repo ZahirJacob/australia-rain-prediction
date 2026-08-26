@@ -4,16 +4,21 @@ from __future__ import annotations
 
 import hashlib
 import json
+import sys
 from pathlib import Path
 
 import numpy as np
 import pandas as pd
 from sklearn.model_selection import train_test_split
 
-from temporal_robustness_evaluation import metrics_for
+ROOT = Path(__file__).resolve().parents[1]
+SCRIPTS_DIR = ROOT / "scripts"
+if str(SCRIPTS_DIR) not in sys.path:
+    sys.path.insert(0, str(SCRIPTS_DIR))
+
+from temporal_robustness_evaluation import metrics_for  # noqa: E402
 
 
-ROOT = Path(__file__).resolve().parent
 ARTIFACTS = ROOT / "artifacts"
 
 
@@ -102,7 +107,7 @@ for name in metric_names:
         atol=1e-12,
     )
 
-data = pd.read_csv(ROOT / "weatherAUS_2026C1.csv")
+data = pd.read_csv(ROOT / "data" / "weatherAUS_2026C1.csv")
 data = data.dropna(subset=["RainTomorrow"])
 y_all = data["RainTomorrow"].map({"No": 0, "Yes": 1})
 development_index, final_test_index = train_test_split(
@@ -124,7 +129,7 @@ assert summary["frozen_artifact_sha256_before"] == current_hashes
 assert summary["frozen_artifact_sha256_after"] == current_hashes
 assert summary["frozen_artifacts_unchanged"] is True
 
-implementation = (ROOT / "temporal_robustness_evaluation.py").read_text(
+implementation = (ROOT / "scripts" / "temporal_robustness_evaluation.py").read_text(
     encoding="utf-8"
 )
 assert "select_threshold" not in implementation

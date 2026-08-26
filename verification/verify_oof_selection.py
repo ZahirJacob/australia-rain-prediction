@@ -3,15 +3,20 @@
 from __future__ import annotations
 
 import json
+import sys
 from pathlib import Path
 
 import numpy as np
 import pandas as pd
 
-from oof_model_selection import metrics_for, select_threshold
+ROOT = Path(__file__).resolve().parents[1]
+SCRIPTS_DIR = ROOT / "scripts"
+if str(SCRIPTS_DIR) not in sys.path:
+    sys.path.insert(0, str(SCRIPTS_DIR))
+
+from oof_model_selection import metrics_for, select_threshold  # noqa: E402
 
 
-ROOT = Path(__file__).resolve().parent
 ARTIFACTS = ROOT / "artifacts"
 
 selection = json.loads((ARTIFACTS / "oof_selection.json").read_text(encoding="utf-8"))

@@ -11,6 +11,7 @@ from __future__ import annotations
 import argparse
 import hashlib
 import json
+import sys
 import time
 from dataclasses import dataclass
 from pathlib import Path
@@ -33,6 +34,12 @@ from sklearn.metrics import (
 )
 from sklearn.model_selection import StratifiedKFold, train_test_split
 from sklearn.tree import DecisionTreeClassifier
+
+
+ROOT = Path(__file__).resolve().parents[1]
+SRC_DIR = ROOT / "src"
+if str(SRC_DIR) not in sys.path:
+    sys.path.insert(0, str(SRC_DIR))
 
 from weather_preprocessing import build_weather_preprocessor
 
@@ -498,9 +505,13 @@ def run(args):
 
 def parse_args():
     parser = argparse.ArgumentParser()
-    parser.add_argument("--dataset", type=Path, default=Path("weatherAUS_2026C1.csv"))
-    parser.add_argument("--coordinates", type=Path, default=Path("location_coordinates.json"))
-    parser.add_argument("--output-dir", type=Path, default=Path("artifacts"))
+    parser.add_argument(
+        "--dataset", type=Path, default=ROOT / "data" / "weatherAUS_2026C1.csv"
+    )
+    parser.add_argument(
+        "--coordinates", type=Path, default=ROOT / "data" / "location_coordinates.json"
+    )
+    parser.add_argument("--output-dir", type=Path, default=ROOT / "artifacts")
     return parser.parse_args()
 
 

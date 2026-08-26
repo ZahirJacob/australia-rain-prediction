@@ -2,6 +2,7 @@
 
 import ast
 import json
+import sys
 from pathlib import Path
 
 import numpy as np
@@ -11,12 +12,16 @@ from sklearn.linear_model import LogisticRegression
 from sklearn.model_selection import StratifiedKFold, cross_validate, train_test_split
 from sklearn.pipeline import Pipeline
 
-from weather_preprocessing import build_weather_preprocessor
+ROOT = Path(__file__).resolve().parents[1]
+SRC_DIR = ROOT / "src"
+if str(SRC_DIR) not in sys.path:
+    sys.path.insert(0, str(SRC_DIR))
+
+from weather_preprocessing import build_weather_preprocessor  # noqa: E402
 
 
-ROOT = Path(__file__).parent
 NOTEBOOK = ROOT / "TP_clasificacion_AA1.ipynb"
-DATASET = ROOT / "weatherAUS_2026C1.csv"
+DATASET = ROOT / "data" / "weatherAUS_2026C1.csv"
 
 
 def source(cell):
@@ -72,7 +77,9 @@ all_modeling_code = "\n".join(source(cell) for cell in cells[35:253])
 assert "fit_transform(X_validation" not in all_modeling_code
 assert "fit(X_validation" not in all_modeling_code
 
-oof_selector = (ROOT / "oof_model_selection.py").read_text(encoding="utf-8")
+oof_selector = (ROOT / "scripts" / "oof_model_selection.py").read_text(
+    encoding="utf-8"
+)
 oof_fit = oof_selector.index("X_subtrain_transformed = preprocessor.fit_transform")
 oof_validation = oof_selector.index(
     "X_validation_transformed = preprocessor.transform(X_fold_validation)"

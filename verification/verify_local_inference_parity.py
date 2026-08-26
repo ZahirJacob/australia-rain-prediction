@@ -16,9 +16,13 @@ from sklearn.model_selection import train_test_split
 from tensorflow import keras
 
 
-ROOT = Path(__file__).resolve().parent
+ROOT = Path(__file__).resolve().parents[1]
+SRC_DIR = ROOT / "src"
+if str(SRC_DIR) not in sys.path:
+    sys.path.insert(0, str(SRC_DIR))
+
 ARTIFACTS = ROOT / "artifacts"
-DATASET = ROOT / "weatherAUS_2026C1.csv"
+DATASET = ROOT / "data" / "weatherAUS_2026C1.csv"
 INFERENCE_SCRIPT = ROOT / "docker" / "inferencia.py"
 SAMPLE_ROWS = 512
 

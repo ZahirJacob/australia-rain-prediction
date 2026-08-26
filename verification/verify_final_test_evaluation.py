@@ -19,7 +19,7 @@ from sklearn.metrics import (
 from sklearn.model_selection import train_test_split
 
 
-ROOT = Path(__file__).resolve().parent
+ROOT = Path(__file__).resolve().parents[1]
 ARTIFACTS = ROOT / "artifacts"
 
 
@@ -85,7 +85,9 @@ assert result["prevalence"]["positive_rows"] == int(y_true.sum())
 assert result["prevalence"]["negative_rows"] == int(len(y_true) - y_true.sum())
 assert np.isclose(result["prevalence"]["positive_rate"], y_true.mean(), atol=1e-12)
 
-data = pd.read_csv(ROOT / "weatherAUS_2026C1.csv", usecols=["RainTomorrow"])
+data = pd.read_csv(
+    ROOT / "data" / "weatherAUS_2026C1.csv", usecols=["RainTomorrow"]
+)
 data = data.dropna(subset=["RainTomorrow"])
 y_all = data["RainTomorrow"].map({"No": 0, "Yes": 1})
 development_index, expected_test_index = train_test_split(
@@ -118,7 +120,9 @@ for reference_name, reference_values in result["reference_metrics"].items():
             atol=1e-12,
         )
 
-implementation = (ROOT / "final_test_evaluation.py").read_text(encoding="utf-8")
+implementation = (ROOT / "scripts" / "final_test_evaluation.py").read_text(
+    encoding="utf-8"
+)
 assert implementation.count("X_test_final = data.loc[final_test_indices]") == 1
 assert implementation.count("preprocessor.transform(X_test_final)") == 1
 assert implementation.count("model.predict(") == 1

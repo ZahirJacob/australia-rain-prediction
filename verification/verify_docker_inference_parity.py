@@ -14,9 +14,9 @@ import numpy as np
 import pandas as pd
 
 
-ROOT = Path(__file__).resolve().parent
+ROOT = Path(__file__).resolve().parents[1]
 ARTIFACTS = ROOT / "artifacts"
-DATASET = ROOT / "weatherAUS_2026C1.csv"
+DATASET = ROOT / "data" / "weatherAUS_2026C1.csv"
 DOCKERFILE = ROOT / "docker" / "Dockerfile"
 ATOL = 1e-7
 RTOL = 1e-6

@@ -5,7 +5,8 @@ import re
 from pathlib import Path
 
 
-NOTEBOOK = Path(__file__).with_name("TP_clasificacion_AA1.ipynb")
+ROOT = Path(__file__).resolve().parents[1]
+NOTEBOOK = ROOT / "TP_clasificacion_AA1.ipynb"
 TEST_IDENTIFIERS = re.compile(
     r"\b(?:X_test_final(?:_raw|_processed|_pycaret)?|y_test_final(?:_encoded)?|df_test_final_raw)\b"
 )
@@ -76,7 +77,9 @@ assert 'Path(selection_oof["frozen_model_artifact"])' in final
 assert "MODELO, HIPERPARAMETROS Y THRESHOLD CONGELADOS" in final
 assert not TEST_IDENTIFIERS.search(final)
 
-selector = NOTEBOOK.with_name("oof_model_selection.py").read_text(encoding="utf-8")
+selector = (ROOT / "scripts" / "oof_model_selection.py").read_text(
+    encoding="utf-8"
+)
 assert "development_indices, final_test_indices = train_test_split(" in selector
 assert "X_development = data.loc[development_indices]" in selector
 assert '"final_test_features_used": 0' in selector

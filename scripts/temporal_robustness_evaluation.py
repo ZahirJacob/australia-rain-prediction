@@ -11,6 +11,7 @@ from __future__ import annotations
 import argparse
 import hashlib
 import json
+import sys
 import time
 from pathlib import Path
 
@@ -25,6 +26,12 @@ from sklearn.metrics import (
     roc_auc_score,
 )
 from sklearn.model_selection import train_test_split
+
+
+ROOT = Path(__file__).resolve().parents[1]
+SRC_DIR = ROOT / "src"
+if str(SRC_DIR) not in sys.path:
+    sys.path.insert(0, str(SRC_DIR))
 
 from oof_model_selection import build_keras_model
 from weather_preprocessing import build_weather_preprocessor
@@ -84,8 +91,8 @@ def run(args):
     threshold = float(winner["threshold"])
     frozen_paths = {
         "selection": selection_path,
-        "model": Path(selection["frozen_model_artifact"]).resolve(),
-        "preprocessor": Path(selection["frozen_preprocessor_artifact"]).resolve(),
+        "model": ROOT / selection["frozen_model_artifact"],
+        "preprocessor": ROOT / selection["frozen_preprocessor_artifact"],
     }
     frozen_hashes_before = {
         name: sha256_file(path) for name, path in frozen_paths.items()
@@ -302,14 +309,16 @@ def run(args):
 
 def parse_args():
     parser = argparse.ArgumentParser()
-    parser.add_argument("--dataset", type=Path, default=Path("weatherAUS_2026C1.csv"))
     parser.add_argument(
-        "--selection", type=Path, default=Path("artifacts/oof_selection.json")
+        "--dataset", type=Path, default=ROOT / "data" / "weatherAUS_2026C1.csv"
     )
     parser.add_argument(
-        "--coordinates", type=Path, default=Path("location_coordinates.json")
+        "--selection", type=Path, default=ROOT / "artifacts" / "oof_selection.json"
     )
-    parser.add_argument("--output-dir", type=Path, default=Path("artifacts"))
+    parser.add_argument(
+        "--coordinates", type=Path, default=ROOT / "data" / "location_coordinates.json"
+    )
+    parser.add_argument("--output-dir", type=Path, default=ROOT / "artifacts")
     return parser.parse_args()
 
 

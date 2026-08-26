@@ -18,7 +18,7 @@ comportamiento del modelo desde distintas perspectivas.
 
 ## Dataset
 
-El proyecto utiliza `weatherAUS_2026C1.csv`, con observaciones meteorológicas
+El proyecto utiliza `data/weatherAUS_2026C1.csv`, con observaciones meteorológicas
 diarias de 49 ubicaciones australianas entre noviembre de 2007 y junio de 2017.
 
 - 145.412 registros originales.
@@ -141,12 +141,12 @@ python -m pip install -r requirements-notebook.txt
 ```text
 .
 ├── TP_clasificacion_AA1.ipynb       # Análisis exploratorio y experimentación
-├── weather_preprocessing.py         # Preprocesamiento reutilizable
-├── oof_model_selection.py           # Selección de modelos mediante CV y OOF
-├── temporal_robustness_evaluation.py # Evaluación temporal expansiva
+├── data/                             # Dataset y coordenadas de ubicaciones
+├── src/                              # Preprocesamiento reutilizable
+├── scripts/                          # Entrenamiento y evaluaciones
+├── verification/                     # Comprobaciones metodológicas y de paridad
 ├── artifacts/                       # Modelo, preprocesador y resultados
 ├── docker/                          # Imagen y entrada de inferencia
-├── verify_*.py                      # Comprobaciones metodológicas y de paridad
 ├── requirements.txt                 # Dependencias del flujo principal
 └── requirements-notebook.txt        # Dependencias exploratorias opcionales
 ```
@@ -158,6 +158,5 @@ dependencias principales están versionadas. El repositorio incluye el modelo
 Keras seleccionado, el preprocesador serializado, el manifiesto con el
 threshold y los resultados OOF, temporales y de test utilizados en este README.
 
-El repositorio también incluye scripts para reproducir y validar el pipeline
-experimental, además de comprobar la paridad entre la inferencia local y
-Docker.
+La carpeta `verification/` incluye scripts para reproducir y validar el pipeline
+experimental, además de comprobar la paridad entre la inferencia local y Docker.
