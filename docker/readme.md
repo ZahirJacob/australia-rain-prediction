@@ -1,56 +1,52 @@
-# Inferencia - Prediccion de lluvia en Australia
+# Inferencia con Docker
 
-La imagen utiliza exclusivamente el modelo final `nn_config_5`, el
-preprocesador `joblib` y el threshold del manifiesto OOF. No contiene PyCaret ni
-artefactos del flujo anterior.
+## Qué hace
 
-## Bundle incluido
+Esta imagen permite ejecutar la inferencia del modelo de predicción de lluvia
+en un entorno reproducible. A partir de observaciones meteorológicas en formato
+CSV, genera la predicción de lluvia para el día siguiente y su probabilidad.
 
-- `artifacts/oof_selection.json`
-- `artifacts/selected_nn_preprocessor.joblib`
-- `artifacts/selected_nn_model.keras`
-- `weather_preprocessing.py`
-- `docker/inferencia.py`
+## Componentes utilizados
 
-La inferencia solo carga componentes congelados, ejecuta
-`preprocessor.transform`, obtiene `P(RainTomorrow=Yes)` y aplica el threshold
-`0.5957959890365601`. No realiza `fit` ni reentrenamiento.
+La inferencia utiliza:
 
-## Verificacion local
+- el modelo Keras `artifacts/selected_nn_model.keras`;
+- el preprocesador `artifacts/selected_nn_preprocessor.joblib`;
+- el threshold definido en `artifacts/oof_selection.json`;
+- el script de entrada `docker/inferencia.py`.
 
-Desde la raiz del repositorio:
+## Build
 
-```bash
-python docker/inferencia.py --input docker/files/input.csv --output docker/files/output_nn.csv --artifacts-dir artifacts
-python verify_local_inference_parity.py
-```
-
-## Build y ejecucion
-
-El contexto debe ser la raiz del repositorio:
+La imagen debe construirse desde la raíz del repositorio:
 
 ```bash
 docker build --file docker/Dockerfile --tag prediccion-lluvia .
+```
+
+## Ejecución
+
+Con el archivo de entrada ubicado en `docker/files/input.csv`, ejecutar desde la
+raíz del repositorio:
+
+```bash
 docker run --rm --mount type=bind,source="${PWD}/docker/files",target=/files prediccion-lluvia
 ```
 
-El contenedor lee `/files/input.csv` y escribe `/files/output.csv`, con columnas
-`prediccion` y `Probabilidad`.
+## Entrada y salida
 
-## Paridad validada
+El contenedor lee `/files/input.csv` y genera `/files/output.csv`, que queda
+disponible como `docker/files/output.csv` en el equipo local.
 
-La comprobacion completa se ejecuta desde la raiz:
+La salida contiene dos columnas:
 
-```bash
-python verify_docker_inference_parity.py
-```
+- `prediccion`: `Llueve` o `No llueve`;
+- `Probabilidad`: probabilidad estimada de lluvia para el día siguiente.
 
-La verificacion real de Docker quedo completada sobre 512 filas de desarrollo:
+## Validación
 
-- interseccion con test final: 0;
-- etiquetas identicas: si;
-- diferencia absoluta maxima de probabilidad: `8.772735593520764e-08`;
-- tolerancias: `atol=1e-7`, `rtol=1e-6`.
+La inferencia Docker fue comparada con la inferencia local sobre 512
+observaciones del conjunto de desarrollo. Ambas produjeron las mismas etiquetas
+y diferencias numéricas despreciables en las probabilidades.
 
-La evidencia y el ID de la imagen estan en
+Los detalles técnicos de la comparación están disponibles en
 `artifacts/docker_inference_parity.json`.
