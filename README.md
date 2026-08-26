@@ -1,76 +1,118 @@
-# Prediccion de lluvia del dia siguiente en Australia
+# Predicción de lluvia en Australia
 
-Proyecto de clasificacion binaria para estimar `RainTomorrow` a partir de
-observaciones meteorologicas disponibles al momento de la prediccion. El flujo
-oficial conserva un split aleatorio estratificado como protocolo principal y
-una evaluacion temporal expansiva como analisis secundario de robustez.
+Proyecto de Machine Learning para predecir si lloverá al día siguiente en
+distintas localidades de Australia. El trabajo abarca análisis exploratorio,
+preprocesamiento, comparación de modelos, selección mediante validación
+cruzada, evaluación temporal e inferencia reproducible con Docker.
 
-## Estado final validado
+## Problema
 
-- Modelo: red neuronal `nn_config_5`.
-- Hiperparametros: 50 epochs, batch size 128, dropout 0.4 y learning rate
-  0.0005.
-- Threshold congelado: `0.5957959890365601`.
-- Criterio principal: F1 de la clase positiva.
-- Seleccion: CV estratificada de 5 folds con probabilidades OOF sobre todo el
-  conjunto de desarrollo.
-- Test final: reservado antes de la seleccion y evaluado una unica vez.
+El objetivo es estimar la variable binaria `RainTomorrow` utilizando únicamente
+información meteorológica disponible durante el día actual. Es un problema
+desbalanceado: los días con lluvia representan aproximadamente el 22,4% de las
+observaciones, por lo que se utilizó el F1 de la clase positiva como métrica
+principal.
 
-| Evaluacion | F1 positivo | Precision | Recall | PR-AUC | ROC-AUC |
+Además de F1, se reportan precision, recall, PR-AUC y ROC-AUC para describir el
+comportamiento del modelo desde distintas perspectivas.
+
+## Dataset
+
+El proyecto utiliza `weatherAUS_2026C1.csv`, con observaciones meteorológicas
+diarias de 49 ubicaciones australianas entre noviembre de 2007 y junio de 2017.
+
+- 145.412 registros originales.
+- 142.153 observaciones con `RainTomorrow` disponible para modelado.
+- Variables de temperatura, humedad, presión, viento, nubosidad, lluvia,
+  evaporación, horas de sol, fecha y ubicación.
+- Variable objetivo: `RainTomorrow` (`Yes` / `No`).
+
+La columna `RainfallTomorrow`, que contiene información del día que se intenta
+predecir, se excluye de las variables de entrada para evitar fuga de datos.
+
+## Metodología
+
+Se reservó un 20% de los datos como test final mediante un split aleatorio
+estratificado con `random_state=42`. El 80% restante se utilizó como conjunto de
+desarrollo.
+
+La selección se realizó con una validación cruzada estratificada de 5 folds y
+predicciones out-of-fold (OOF). Cada observación de desarrollo fue evaluada por
+un modelo que no la había visto durante su ajuste. Se compararon 23 candidatos,
+incluyendo modelos lineales, árboles, ensembles y redes neuronales.
+
+El pipeline incorpora:
+
+- variables estacionales derivadas de la fecha;
+- información geográfica de las ubicaciones;
+- imputación por mediana, moda y KNN según el tipo de variable;
+- codificación one-hot y escalado;
+- balanceo con SMOTE aplicado solo sobre el entrenamiento de cada fold.
+
+Todas las transformaciones que aprenden parámetros se ajustan dentro de cada
+fold. Los folds de validación y el test final reciben únicamente las
+transformaciones ya aprendidas.
+
+El modelo, sus hiperparámetros y el threshold se seleccionaron maximizando el
+F1 positivo sobre las probabilidades OOF. Como evaluación complementaria, se
+utilizaron cinco ventanas temporales expansivas para medir el rendimiento sobre
+observaciones cronológicamente posteriores.
+
+## Modelo y resultados
+
+El modelo seleccionado fue una red neuronal con la siguiente configuración:
+
+- 50 epochs;
+- batch size de 128;
+- dropout de 0,4;
+- learning rate de 0,0005;
+- threshold de clasificación de `0.596`.
+
+| Evaluación | F1 positivo | Precision | Recall | PR-AUC | ROC-AUC |
 |---|---:|---:|---:|---:|---:|
-| OOF principal | 0.6592 | 0.6251 | 0.6973 | 0.7214 | 0.8819 |
-| Temporal, media macro | 0.6395 | 0.6118 | 0.6704 | 0.7075 | 0.8707 |
-| Test final | 0.6532 | 0.6396 | 0.6672 | 0.7340 | 0.8851 |
+| OOF sobre desarrollo | 0.6592 | 0.6251 | 0.6973 | 0.7214 | 0.8819 |
+| Temporal expansiva (media) | 0.6395 | 0.6118 | 0.6704 | 0.7075 | 0.8707 |
+| **Test final** | **0.6532** | **0.6396** | **0.6672** | **0.7340** | **0.8851** |
 
-Los resultados temporales y del test son descriptivos: no modificaron modelo,
-hiperparametros, preprocessing ni threshold.
+El test final contiene 28.431 observaciones. La cercanía entre el F1 de test y
+el F1 OOF, junto con la evaluación temporal, permite comparar el rendimiento
+del modelo bajo el split principal y frente al paso del tiempo.
 
-## Protocolo y particiones
+## Inferencia con Docker
 
-1. Un 20% estratificado se reserva como test final con `random_state=42`.
-2. El 80% restante es desarrollo. La seleccion oficial usa una unica
-   `StratifiedKFold` de 5 folds y probabilidades OOF.
-3. En cada fold, toda transformacion que aprende parametros y SMOTE se ajustan
-   exclusivamente con el subtrain. La validacion recibe solamente `transform`.
-4. Modelo, hiperparametros y threshold se eligen por F1 positivo OOF.
-5. Cinco ventanas temporales expansivas evaluan robustez sin intervenir en la
-   seleccion.
-6. El test final se abre una sola vez, despues del congelamiento. No debe
-   ejecutarse nuevamente `final_test_evaluation.py`.
+La imagen Docker empaqueta el preprocesador, la red neuronal y el threshold
+seleccionado para reproducir el mismo flujo de inferencia en un entorno
+aislado.
 
-`RainfallTomorrow` se elimina antes del modelado porque contiene informacion
-del dia objetivo. El dataset, la semilla y los hashes de indices almacenados en
-los reportes permiten reconstruir y verificar las particiones.
+Desde la raíz del repositorio:
 
-## Estructura
+```bash
+docker build --file docker/Dockerfile --tag prediccion-lluvia .
+docker run --rm \
+  --mount type=bind,source="${PWD}/docker/files",target=/files \
+  prediccion-lluvia
+```
 
-- `TP_clasificacion_AA1.ipynb`: analisis exploratorio y narrativa experimental.
-  Las comparaciones anteriores con PyCaret son historicas; no definen el modelo
-  final.
-- `weather_preprocessing.py`: transformadores clonables y preprocessing
-  fold-local.
-- `oof_model_selection.py`: seleccion oficial y congelamiento. Regenera los
-  artefactos finales; no es una comprobacion rutinaria.
-- `temporal_robustness_evaluation.py`: evaluacion temporal secundaria.
-- `final_test_evaluation.py`: evaluacion final de una sola ejecucion. Esta
-  cerrada y no debe volver a ejecutarse.
-- `verify_*.py`: comprobaciones metodologicas y de paridad.
-- `artifacts/`: bundle final y evidencia auditable; consultar
-  `artifacts/README.md`.
-- `docker/`: inferencia autocontenida con el bundle final validado.
+El contenedor lee `docker/files/input.csv` y genera
+`docker/files/output.csv`. La salida contiene:
 
-## Entornos y dependencias
+- `prediccion`: `Llueve` o `No llueve`;
+- `Probabilidad`: probabilidad estimada de `RainTomorrow=Yes`.
 
-El dataset y los artefactos binarios se versionan con Git LFS. Despues de
-clonar el repositorio:
+Las predicciones del contenedor fueron contrastadas con la inferencia local
+sobre 512 observaciones de desarrollo: las etiquetas fueron idénticas y la
+diferencia máxima entre probabilidades fue `8.77e-08`.
+
+## Instalación y uso
+
+El dataset y los artefactos binarios se almacenan con Git LFS:
 
 ```bash
 git lfs install
 git lfs pull
 ```
 
-La inferencia Docker esta validada sobre Python 3.12. Para crear el entorno
-principal de entrenamiento y verificacion:
+Para crear el entorno local:
 
 ```bash
 python -m venv .venv
@@ -78,50 +120,44 @@ python -m pip install --upgrade pip
 python -m pip install -r requirements.txt
 ```
 
-Las dependencias exploratorias del notebook, incluido PyCaret, son opcionales:
+Inferencia local con los artefactos incluidos:
+
+```bash
+python docker/inferencia.py \
+  --input docker/files/input.csv \
+  --output docker/files/output.csv \
+  --artifacts-dir artifacts
+```
+
+Para ejecutar el notebook completo, con sus visualizaciones y comparaciones
+exploratorias, se pueden instalar las dependencias adicionales:
 
 ```bash
 python -m pip install -r requirements-notebook.txt
 ```
 
-`requirements.txt` contiene las dependencias directas y versiones del flujo
-oficial. `docker/requirements.txt` es deliberadamente mas pequeno porque solo
-sirve inferencia. TensorFlow fija semillas en el entrenamiento; aun asi, una
-repeticion desde cero puede presentar diferencias numericas menores entre
-plataformas. La reproduccion exacta de inferencia se garantiza mediante los
-artefactos congelados y sus hashes.
+## Estructura del proyecto
 
-## Verificacion sin reabrir el test
-
-Desde la raiz, estas comprobaciones no entrenan sobre el test ni vuelven a
-calcular sus predicciones:
-
-```bash
-python verify_test_isolation.py
-python verify_fold_local_preprocessing.py
-python verify_oof_selection.py
-python verify_temporal_robustness.py
-python verify_final_test_evaluation.py
+```text
+.
+├── TP_clasificacion_AA1.ipynb       # Análisis exploratorio y experimentación
+├── weather_preprocessing.py         # Preprocesamiento reutilizable
+├── oof_model_selection.py           # Selección de modelos mediante CV y OOF
+├── temporal_robustness_evaluation.py # Evaluación temporal expansiva
+├── artifacts/                       # Modelo, preprocesador y resultados
+├── docker/                          # Imagen y entrada de inferencia
+├── verify_*.py                      # Comprobaciones metodológicas y de paridad
+├── requirements.txt                 # Dependencias del flujo principal
+└── requirements-notebook.txt        # Dependencias exploratorias opcionales
 ```
 
-Las dos comprobaciones siguientes usan exclusivamente 512 filas de desarrollo
-y actualizan sus propios archivos de evidencia de paridad:
+## Reproducibilidad
 
-```bash
-python verify_local_inference_parity.py
-python verify_docker_inference_parity.py
-```
+Las particiones y los algoritmos utilizan una semilla fija (`42`), y las
+dependencias principales están versionadas. El repositorio incluye el modelo
+Keras seleccionado, el preprocesador serializado, el manifiesto con el
+threshold y los resultados OOF, temporales y de test utilizados en este README.
 
-El segundo comando realiza `docker build` y `docker run`. El ultimo resultado
-validado obtuvo etiquetas identicas y una diferencia maxima de probabilidad de
-`8.77e-08`, con cero filas del test final.
-
-## Artefactos congelados
-
-| Componente | SHA-256 |
-|---|---|
-| `artifacts/oof_selection.json` | `7c03609f8f206d38f1e474886efa98034c499fcf78cf308f980a178efd6e0a2d` |
-| `artifacts/selected_nn_model.keras` | `041251e4eec0cdb5031edaa39a150664424fb5e6cef85156c2cd02a5bd92e077` |
-| `artifacts/selected_nn_preprocessor.joblib` | `4bca0f30cfe1d3bde21c0e4da62044d8c3f3a6c19b220d2407c44df3820069ac` |
-
-Estos tres archivos no deben editarse ni regenerarse durante verificaciones.
+El repositorio también incluye scripts para reproducir y validar el pipeline
+experimental, además de comprobar la paridad entre la inferencia local y
+Docker.
