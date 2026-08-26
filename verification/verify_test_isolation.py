@@ -36,7 +36,7 @@ assert 'random_split_manifest.to_csv("random_split_manifest.csv"' in protocol
 assert '"status": "complete"' in protocol
 assert '"evaluation_count": 1' in protocol
 
-# Durante prioridad 3 solo se permiten referencias de test para crearlo,
+# Antes de la evaluación final solo se permiten referencias de test para crearlo,
 # conservarlo crudo y comprobar que no se solapa con desarrollo.
 allowed_setup_cells = {36, 37, 38}
 unexpected_test_references = []
@@ -62,7 +62,7 @@ for index, cell in enumerate(cells[36:], start=36):
         legacy_references.append((index, identifiers))
 assert not legacy_references, f"Persisten referencias al test anterior: {legacy_references}"
 
-# La ruta oficial de decisión carga exclusivamente los artefactos OOF.
+# La selección se reconstruye exclusivamente desde los artefactos OOF.
 oof_load = source(cells[246])
 assert 'Path("artifacts/oof_candidate_metrics.csv")' in oof_load
 assert 'Path("artifacts/oof_selection.json")' in oof_load
@@ -74,7 +74,7 @@ final = source(cells[253])
 assert 'ganador_oof = selection_oof["winner"]' in final
 assert 'df_comparacion["f1_positive"].max()' in final
 assert 'Path(selection_oof["frozen_model_artifact"])' in final
-assert "MODELO, HIPERPARAMETROS Y THRESHOLD CONGELADOS" in final
+assert "CONFIGURACIÓN SELECCIONADA MEDIANTE OOF" in final
 assert not TEST_IDENTIFIERS.search(final)
 
 selector = (ROOT / "scripts" / "oof_model_selection.py").read_text(
@@ -87,17 +87,26 @@ assert '"final_test_predictions_computed": 0' in selector
 assert "final_test_index_set" in selector
 assert "data.loc[final_test_indices]" not in selector
 
-# Los resultados posteriores al split anterior fueron eliminados por ser obsoletos.
-stale_outputs = []
-for index, cell in enumerate(cells[36:], start=36):
-    if cell["cell_type"] == "code" and cell.get("outputs"):
-        stale_outputs.append(index)
-assert not stale_outputs, f"Persisten outputs del protocolo anterior: {stale_outputs}"
+# Las secciones OOF, temporal y test solo reconstruyen resultados guardados.
+final_section_source = "\n".join(
+    source(cell) for cell in cells[246:] if cell["cell_type"] == "code"
+)
+for required_path in (
+    "artifacts/oof_candidate_metrics.csv",
+    "artifacts/oof_selection.json",
+    "artifacts/temporal_robustness.json",
+    "artifacts/temporal_fold_metrics.csv",
+    "artifacts/final_test_metrics.json",
+    "artifacts/final_test_evaluation.completed.json",
+):
+    assert required_path in final_section_source
+for forbidden_call in (".fit(", ".predict(", ".predict_proba(", "subprocess"):
+    assert forbidden_call not in final_section_source
 
-print("OK: protocolo aleatorio primario congelado")
+print("OK: protocolo aleatorio primario reproducible")
 print("OK: evaluacion temporal implementada como analisis secundario no decisional")
 print("OK: train, validation y test final usan identificadores separados")
 print("OK: modelo, hiperparametros y umbral se leen del manifiesto OOF")
 print("OK: el selector no materializa features ni predicciones del test final")
-print("OK: el test se evaluo una sola vez despues de congelar prioridad 3")
-print("OK: no quedan outputs numericos del protocolo contaminado anterior")
+print("OK: el test se evaluo una sola vez despues de completar la seleccion OOF")
+print("OK: las secciones finales leen artefactos sin ejecutar fit ni predicciones")

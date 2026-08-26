@@ -1,4 +1,4 @@
-"""Verificacion reproducible de la seleccion OOF de prioridad 3."""
+"""Verificacion reproducible de la seleccion mediante probabilidades OOF."""
 
 from __future__ import annotations
 
@@ -88,7 +88,7 @@ assert 'Path("artifacts/oof_selection.json")' in notebook_source
 assert 'Path("artifacts/oof_candidate_metrics.csv")' in notebook_source
 assert 'selection_oof["winner"]' in notebook_source
 assert 'selection_oof["primary_metric"] == "f1_positive"' in notebook_source
-assert "MODELO, HIPERPARAMETROS Y THRESHOLD CONGELADOS" in notebook_source
+assert "CONFIGURACIÓN SELECCIONADA MEDIANTE OOF" in notebook_source
 
 print("OK: 23 candidatos tienen probabilidades OOF completas y finitas")
 print("OK: cada fila de desarrollo pertenece exactamente a uno de 5 folds")
