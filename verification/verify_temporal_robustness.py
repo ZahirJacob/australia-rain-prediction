@@ -30,6 +30,15 @@ def sha256_file(path):
     return digest.hexdigest()
 
 
+def assert_hashes_match(recorded, current, label):
+    """Same check as before, but the failure names the artifact whose hash differs."""
+    mismatched = {k: (recorded.get(k), current.get(k)) for k in set(recorded) | set(current) if recorded.get(k) != current.get(k)}
+    assert not mismatched, (
+        f"{label}: hash distinto para {sorted(mismatched)} "
+        + "; ".join(f"{k}: registrado={r[:16] if r else None} actual={c[:16] if c else None}" for k, (r, c) in mismatched.items())
+    )
+
+
 selection = json.loads((ARTIFACTS / "oof_selection.json").read_text(encoding="utf-8"))
 summary = json.loads(
     (ARTIFACTS / "temporal_robustness.json").read_text(encoding="utf-8")
@@ -125,8 +134,8 @@ current_hashes = {
     "model": sha256_file(ROOT / selection["frozen_model_artifact"]),
     "preprocessor": sha256_file(ROOT / selection["frozen_preprocessor_artifact"]),
 }
-assert summary["frozen_artifact_sha256_before"] == current_hashes
-assert summary["frozen_artifact_sha256_after"] == current_hashes
+assert_hashes_match(summary["frozen_artifact_sha256_before"], current_hashes, "temporal_robustness.frozen_artifact_sha256_before")
+assert_hashes_match(summary["frozen_artifact_sha256_after"], current_hashes, "temporal_robustness.frozen_artifact_sha256_after")
 assert summary["frozen_artifacts_unchanged"] is True
 
 implementation = (ROOT / "scripts" / "temporal_robustness_evaluation.py").read_text(

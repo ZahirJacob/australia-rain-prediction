@@ -70,5 +70,5 @@
     "epochs": 50,
     "learning_rate": 0.0005
   },
-  "winner_source": "C:/Users/zahir/Documents/Codex/Proyecto_clima_original/AA1-TUIA-Dimenna-Jacob-Taborda/artifacts/oof_selection.json"
+  "winner_source": "artifacts/oof_selection.json"
 }

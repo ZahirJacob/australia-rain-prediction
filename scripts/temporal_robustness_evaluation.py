@@ -276,7 +276,7 @@ def run(args):
         "initial_training_rows_not_scored": int(
             len(X_development) - len(temporal_y)
         ),
-        "winner_source": str(selection_path.as_posix()),
+        "winner_source": selection_path.relative_to(ROOT).as_posix(),
         "winner_candidate_id": winner["candidate_id"],
         "winner_parameters": winner["parameters"],
         "threshold": threshold,

@@ -232,8 +232,8 @@ def run(args):
         {
             "status": "complete",
             "completed_at_utc": datetime.now(timezone.utc).isoformat(),
-            "metrics_artifact": str(metrics_path.as_posix()),
-            "predictions_artifact": str(predictions_path.as_posix()),
+            "metrics_artifact": metrics_path.relative_to(ROOT).as_posix(),
+            "predictions_artifact": predictions_path.relative_to(ROOT).as_posix(),
             "test_prediction_calls": 1,
         }
     )
