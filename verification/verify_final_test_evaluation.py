@@ -7,6 +7,8 @@ import json
 from pathlib import Path
 
 import numpy as np
+
+from _common import assert_hashes_match  # noqa: E402
 import pandas as pd
 from sklearn.metrics import (
     average_precision_score,
@@ -29,6 +31,7 @@ def sha256_file(path):
         for chunk in iter(lambda: handle.read(1024 * 1024), b""):
             digest.update(chunk)
     return digest.hexdigest()
+
 
 
 selection = json.loads((ARTIFACTS / "oof_selection.json").read_text(encoding="utf-8"))
@@ -105,10 +108,10 @@ current_hashes = {
     "model": sha256_file(ROOT / selection["frozen_model_artifact"]),
     "preprocessor": sha256_file(ROOT / selection["frozen_preprocessor_artifact"]),
 }
-assert result["frozen_artifact_sha256_before"] == current_hashes
-assert result["frozen_artifact_sha256_after"] == current_hashes
+assert_hashes_match(result["frozen_artifact_sha256_before"], current_hashes, "final_test_metrics.frozen_artifact_sha256_before")
+assert_hashes_match(result["frozen_artifact_sha256_after"], current_hashes, "final_test_metrics.frozen_artifact_sha256_after")
 assert result["frozen_artifacts_unchanged"] is True
-assert current_hashes == temporal["frozen_artifact_sha256_after"]
+assert_hashes_match(temporal["frozen_artifact_sha256_after"], current_hashes, "temporal_robustness.frozen_artifact_sha256_after")
 
 for reference_name, reference_values in result["reference_metrics"].items():
     for metric_name, test_value in result["test_metrics"].items():

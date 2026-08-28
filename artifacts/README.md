@@ -13,6 +13,14 @@ Son los unicos artefactos copiados por Docker. Sus hashes oficiales estan en el
 README principal y en los reportes de paridad. No deben regenerarse para
 ejecutar verificaciones.
 
+Nota: el SHA-256 registrado en los reportes para `oof_selection.json`
+(`7c03609f...`) no coincide con el del archivo versionado (`e26db0a2...`); el
+manifiesto fue editado despues de calcularse los hashes y no se conserva la
+version original. Los hashes del modelo y del preprocesador si coinciden. Los
+cuatro scripts de verificacion que comparan estos hashes fallan en esa
+comprobacion e informan que hash difiere. Ver "Notas posteriores a la entrega"
+en el README principal.
+
 ## Evidencia experimental
 
 - `oof_candidate_metrics.csv`, `oof_fold_audit.csv` y `oof_predictions.npz`:

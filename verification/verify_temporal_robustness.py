@@ -8,6 +8,8 @@ import sys
 from pathlib import Path
 
 import numpy as np
+
+from _common import assert_hashes_match  # noqa: E402
 import pandas as pd
 from sklearn.model_selection import train_test_split
 
@@ -28,6 +30,7 @@ def sha256_file(path):
         for chunk in iter(lambda: handle.read(1024 * 1024), b""):
             digest.update(chunk)
     return digest.hexdigest()
+
 
 
 selection = json.loads((ARTIFACTS / "oof_selection.json").read_text(encoding="utf-8"))
@@ -125,8 +128,8 @@ current_hashes = {
     "model": sha256_file(ROOT / selection["frozen_model_artifact"]),
     "preprocessor": sha256_file(ROOT / selection["frozen_preprocessor_artifact"]),
 }
-assert summary["frozen_artifact_sha256_before"] == current_hashes
-assert summary["frozen_artifact_sha256_after"] == current_hashes
+assert_hashes_match(summary["frozen_artifact_sha256_before"], current_hashes, "temporal_robustness.frozen_artifact_sha256_before")
+assert_hashes_match(summary["frozen_artifact_sha256_after"], current_hashes, "temporal_robustness.frozen_artifact_sha256_after")
 assert summary["frozen_artifacts_unchanged"] is True
 
 implementation = (ROOT / "scripts" / "temporal_robustness_evaluation.py").read_text(

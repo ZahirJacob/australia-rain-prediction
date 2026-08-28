@@ -1,8 +1,8 @@
 {
   "completed_at_utc": "2026-08-25T21:24:49.180602+00:00",
-  "metrics_artifact": "C:/Users/zahir/Documents/Codex/Proyecto_clima_original/AA1-TUIA-Dimenna-Jacob-Taborda/artifacts/final_test_metrics.json",
+  "metrics_artifact": "artifacts/final_test_metrics.json",
   "policy": "single_final_test_evaluation",
-  "predictions_artifact": "C:/Users/zahir/Documents/Codex/Proyecto_clima_original/AA1-TUIA-Dimenna-Jacob-Taborda/artifacts/final_test_predictions.npz",
+  "predictions_artifact": "artifacts/final_test_predictions.npz",
   "started_at_utc": "2026-08-25T21:24:44.617317+00:00",
   "status": "complete",
   "test_prediction_calls": 1

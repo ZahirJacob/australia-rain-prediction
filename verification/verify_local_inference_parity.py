@@ -11,6 +11,8 @@ from pathlib import Path
 
 import joblib
 import numpy as np
+
+from _common import assert_hashes_match  # noqa: E402
 import pandas as pd
 from sklearn.model_selection import train_test_split
 from tensorflow import keras
@@ -48,7 +50,7 @@ current_hashes = {
     "model": sha256_file(ROOT / selection["frozen_model_artifact"]),
     "preprocessor": sha256_file(ROOT / selection["frozen_preprocessor_artifact"]),
 }
-assert current_hashes == final_report["frozen_artifact_sha256_after"]
+assert_hashes_match(final_report["frozen_artifact_sha256_after"], current_hashes, "final_test_metrics.frozen_artifact_sha256_after")
 
 data = pd.read_csv(DATASET)
 data = data.dropna(subset=["RainTomorrow"])

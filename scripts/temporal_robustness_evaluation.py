@@ -29,6 +29,16 @@ from sklearn.model_selection import train_test_split
 
 
 ROOT = Path(__file__).resolve().parents[1]
+
+
+def repo_relative(path):
+    """Repository-relative POSIX path when `path` is inside the repo, absolute otherwise."""
+    path = Path(path).resolve()
+    try:
+        return path.relative_to(ROOT).as_posix()
+    except ValueError:
+        return path.as_posix()
+
 SRC_DIR = ROOT / "src"
 if str(SRC_DIR) not in sys.path:
     sys.path.insert(0, str(SRC_DIR))
@@ -276,7 +286,7 @@ def run(args):
         "initial_training_rows_not_scored": int(
             len(X_development) - len(temporal_y)
         ),
-        "winner_source": str(selection_path.as_posix()),
+        "winner_source": repo_relative(selection_path),
         "winner_candidate_id": winner["candidate_id"],
         "winner_parameters": winner["parameters"],
         "threshold": threshold,
