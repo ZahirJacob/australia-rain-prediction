@@ -29,6 +29,16 @@ from tensorflow import keras
 
 
 ROOT = Path(__file__).resolve().parents[1]
+
+
+def repo_relative(path):
+    """Repository-relative POSIX path when `path` is inside the repo, absolute otherwise."""
+    path = Path(path).resolve()
+    try:
+        return path.relative_to(ROOT).as_posix()
+    except ValueError:
+        return path.as_posix()
+
 SRC_DIR = ROOT / "src"
 if str(SRC_DIR) not in sys.path:
     sys.path.insert(0, str(SRC_DIR))
@@ -232,8 +242,8 @@ def run(args):
         {
             "status": "complete",
             "completed_at_utc": datetime.now(timezone.utc).isoformat(),
-            "metrics_artifact": metrics_path.relative_to(ROOT).as_posix(),
-            "predictions_artifact": predictions_path.relative_to(ROOT).as_posix(),
+            "metrics_artifact": repo_relative(metrics_path),
+            "predictions_artifact": repo_relative(predictions_path),
             "test_prediction_calls": 1,
         }
     )

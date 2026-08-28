@@ -218,11 +218,13 @@ de su entrega. No se modificó ningún artefacto científico ni se reentrenó na
   (`4bca0f30…`) sí coinciden. El manifiesto fue editado después de calcularse
   los hashes (probablemente al agregar las claves `frozen_*` al congelar el
   bundle) y no se conserva la versión original, así que la discrepancia no
-  puede resolverse sin reescribir evidencia. Consecuencia práctica:
-  `verification/verify_final_test_evaluation.py` y
-  `verification/verify_temporal_robustness.py` fallan en esa comprobación (y
-  ahora informan qué hash difiere); el resto de sus comprobaciones y los demás
-  scripts de verificación pasan.
+  puede resolverse sin reescribir evidencia. Consecuencia práctica: los cuatro
+  scripts que comparan esos hashes —`verify_final_test_evaluation.py`,
+  `verify_temporal_robustness.py`, `verify_local_inference_parity.py` y
+  `verify_docker_inference_parity.py`— fallan en esa comprobación, que ahora
+  informa qué hash difiere. `verify_oof_selection.py`,
+  `verify_fold_local_preprocessing.py` y `verify_test_isolation.py` no dependen
+  de ese hash y pasan.
 - **Coordenadas de Richmond.** `data/location_coordinates.json` ubica
   `Richmond` en Richmond, Victoria (-37,81, 144,99); la estación del dataset es
   Richmond RAAF, Nueva Gales del Sur (aprox. -33,60, 150,78). Afecta solo la

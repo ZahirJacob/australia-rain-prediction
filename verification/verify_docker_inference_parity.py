@@ -11,6 +11,8 @@ import tempfile
 from pathlib import Path
 
 import numpy as np
+
+from _common import assert_hashes_match  # noqa: E402
 import pandas as pd
 
 
@@ -67,8 +69,7 @@ def main():
             ROOT / selection["frozen_preprocessor_artifact"]
         ),
     }
-    if current_hashes != local_summary["frozen_artifact_sha256"]:
-        raise AssertionError("Los artefactos congelados cambiaron desde la paridad local")
+    assert_hashes_match(local_summary["frozen_artifact_sha256"], current_hashes, "local_inference_parity.frozen_artifact_sha256")
 
     data = pd.read_csv(DATASET)
     sample = data.loc[row_index].drop(

@@ -7,6 +7,8 @@ import json
 from pathlib import Path
 
 import numpy as np
+
+from _common import assert_hashes_match  # noqa: E402
 import pandas as pd
 from sklearn.metrics import (
     average_precision_score,
@@ -30,14 +32,6 @@ def sha256_file(path):
             digest.update(chunk)
     return digest.hexdigest()
 
-
-def assert_hashes_match(recorded, current, label):
-    """Same check as before, but the failure names the artifact whose hash differs."""
-    mismatched = {k: (recorded.get(k), current.get(k)) for k in set(recorded) | set(current) if recorded.get(k) != current.get(k)}
-    assert not mismatched, (
-        f"{label}: hash distinto para {sorted(mismatched)} "
-        + "; ".join(f"{k}: registrado={r[:16] if r else None} actual={c[:16] if c else None}" for k, (r, c) in mismatched.items())
-    )
 
 
 selection = json.loads((ARTIFACTS / "oof_selection.json").read_text(encoding="utf-8"))
